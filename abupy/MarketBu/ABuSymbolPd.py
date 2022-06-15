@@ -11,6 +11,7 @@ import logging
 from collections import Iterable
 
 import pandas as pd
+import numpy as np
 
 from .ABuDataSource import kline_pd
 from ..MarketBu.ABuDataCache import save_kline_df, check_csv_local
@@ -49,10 +50,17 @@ def _benchmark(df, benchmark, symbol):
         # 如果基准benchmark时间范围和输入的df没有交集，直接返回None
         return None
 
+    
     # 两个金融时间序列通过loc寻找交集
-    kl_pd = df.loc[benchmark.kl_pd.index]
+    # kl_pd = df.loc[benchmark.kl_pd.index]
+
+    # 两个pd中没有的date显示为nan，寻找两个pd的交集
+    benchmark.kl_pd["date_t"] = np.NAN
+    kl_pd = pd.merge(benchmark.kl_pd[["date_t"]], df, how="outer", left_index=True, right_index=True)
+
     # nan的date个数即为不相交的个数
     nan_cnt = kl_pd['date'].isnull().value_counts()
+
     # 两个金融序列是否相同的结束日期
     same_end = df.index[-1] == benchmark.kl_pd.index[-1]
     # 两个金融序列是否相同的开始日期

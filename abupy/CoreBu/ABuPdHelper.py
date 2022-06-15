@@ -50,6 +50,13 @@ try:
 except ImportError:
     g_pandas_has_expanding = False
 
+# 采用pandas 1.0版本，不用验证
+g_pandas_has_ewm = True
+g_pandas_has_resampler = True
+g_pandas_has_rolling = True
+g_pandas_has_expanding = True
+
+
 
 def __pd_object_covert_start(iter_obj):
     """
